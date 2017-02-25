@@ -83,30 +83,49 @@ RSpec.describe Game, type: :model do
   
   # группа тестов на проверку статуса игры
   context '.status' do
-  # перед каждым тестом "завершаем игру"
-  before(:each) do
-    game_w_questions.finished_at = Time.now
-    expect(game_w_questions.finished?).to be_truthy
-  end
+    # перед каждым тестом "завершаем игру"
+    before(:each) do
+      game_w_questions.finished_at = Time.now
+      expect(game_w_questions.finished?).to be_truthy
+    end
 
-  it ':won' do
-    game_w_questions.current_level = Question::QUESTION_LEVELS.max + 1
-    expect(game_w_questions.status).to eq(:won)
-  end
+    it ':won' do
+      game_w_questions.current_level = Question::QUESTION_LEVELS.max + 1
+      expect(game_w_questions.status).to eq(:won)
+    end
 
-  it ':fail' do
-    game_w_questions.is_failed = true
-    expect(game_w_questions.status).to eq(:fail)
-  end
+    it ':fail' do
+      game_w_questions.is_failed = true
+      expect(game_w_questions.status).to eq(:fail)
+    end
 
-  it ':timeout' do
-    game_w_questions.created_at = 1.hour.ago
-    game_w_questions.is_failed = true
-    expect(game_w_questions.status).to eq(:timeout)
-  end
+    it ':timeout' do
+      game_w_questions.created_at = 1.hour.ago
+      game_w_questions.is_failed = true
+      expect(game_w_questions.status).to eq(:timeout)
+    end
 
-  it ':money' do
-    expect(game_w_questions.status).to eq(:money)
+    it ':money' do
+      expect(game_w_questions.status).to eq(:money)
+    end
   end
-end
+  
+  context 'game condition' do
+    it 'correct .current_game_question' do
+      game_w_questions.current_level = 1
+      expect(game_w_questions.current_game_question.level).to eq(1)
+    end
+
+    it 'correct .previous_game_question' do
+      expect(game_w_questions.previous_game_question).to eq(nil)
+
+      game_w_questions.current_level = 2
+      expect(game_w_questions.previous_game_question.level).to eq(1)
+    end
+
+    it 'correct .previous_level' do
+      game_w_questions.current_level = 2
+      expect(game_w_questions.previous_level).to eq(1)
+    end
+  end
 end

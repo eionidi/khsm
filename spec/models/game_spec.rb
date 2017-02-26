@@ -43,6 +43,26 @@ RSpec.describe Game, type: :model do
 
   # тесты на основную игровую логику
   context 'game mechanics' do
+    context 'correct .answer_current_question!' do
+
+      let(:q) { game_w_questions.current_game_question.correct_answer_key }
+
+      it 'answer_correct' do
+        expect(game_w_questions.answer_current_question!(q)).to be_truthy
+      end
+
+      it 'answer_correct last' do
+        game_w_questions.current_level = Question::QUESTION_LEVELS.max
+        expect(game_w_questions.answer_current_question!(q)).to be_truthy
+        expect(game_w_questions.status).to eq(:won)
+        expect(game_w_questions.finished?).to be_truthy
+      end
+
+      it 'wrong answer' do
+        expect(game_w_questions.answer_current_question!('wrong answer')).to be_falsey
+        expect(game_w_questions.finished?).to be_truthy
+      end
+    end
 
     # правильный ответ должен продолжать игру
     it 'answer correct continues game' do

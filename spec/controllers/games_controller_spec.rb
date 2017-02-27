@@ -17,16 +17,12 @@ RSpec.describe GamesController, type: :controller do
   # игра с прописанными игровыми вопросами
   let(:game_w_questions) { FactoryGirl.create(:game_with_questions, user: user) }
 
-  # группа тестов для незалогиненного юзера (Анонимус)
+  # группа тестов для незалогиненного юзера
   context 'Anon' do
-    # из экшена show анона посылаем
-    it 'kick from #show' do
-      # вызываем экшен
+    it '#show' do
       get :show, id: game_w_questions.id
-      # проверяем ответ
-      expect(response.status).not_to eq(200) # статус не 200 ОК
-      expect(response).to redirect_to(new_user_session_path) # devise должен отправить на логин
-      expect(flash[:alert]).to be # во flash должен быть прописана ошибка
+      expect(response.status).to eq(200)
+      expect(response).to redirect_to(new_user_session_path)
     end
     
     it 'kick from #create' do

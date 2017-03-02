@@ -65,7 +65,6 @@ RSpec.describe Game, type: :model do
       
       it 'timeout answer' do
         game_w_questions.created_at = 1.hour.ago
-        game_w_questions.is_failed = true
         expect(game_w_questions.answer_current_question!(q)).to be_falsey
         expect(game_w_questions.status).to eq(:timeout)
       end
